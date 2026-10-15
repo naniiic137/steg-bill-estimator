@@ -6,7 +6,7 @@
  * Residential low-voltage tariffs in force since May 2022.
  *
  * Taxes follow STEG's own online bill simulator (https://www.steg.com.tn/fr/simulation), checked
- * on 16 simulated bills (docs/tariff-research.md). Anything marked `verified: false` has not yet
+ * on 17 simulated bills (docs/tariff-research.md). Anything marked `verified: false` has not yet
  * been checked against a PRINTED STEG bill (see README.md, "Assumptions to verify").
  */
 var STEG_TARIFFS = {
