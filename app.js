@@ -58,11 +58,34 @@
   var timer = null;
   var copyTimer = null;
 
-  var MAIN_FIELDS = ['prev', 'curr', 'prev2', 'curr2', 'months', 'start', 'end', 'kvaOther'];
+  var MAIN_FIELDS = ['prev', 'curr', 'prev2', 'curr2', 'trackStart', 'trackDate', 'trackNow', 'months', 'start', 'end', 'kvaOther'];
+  var TRACK_KEY = 'steg-estimator-track'; // a reading saved on this phone, for people with no old reading
   var CAL_FIELDS = ['calKwh', 'calMonths', 'calKva', 'calPaid'];
   var PAY_FIELDS = ['arrears', 'prepaid']; // money from earlier bills, both optional
 
   /* ---------------- small helpers ---------------- */
+
+  /** Today as "YYYY-MM-DD" in local time. */
+  function todayISO() {
+    var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+  /** "2026-10-16" -> "16/10/2026" */
+  function niceDate(iso8601) { var x = String(iso8601).split('-'); return x.length === 3 ? x[2] + '/' + x[1] + '/' + x[0] : iso8601; }
+
+  function showTrackStatus(text) { var s = $('track-status'); s.textContent = text; s.hidden = !text; }
+  /** A reading saved on this phone fills the first reading; with selectMode it also opens that mode. */
+  function loadTrack(selectMode) {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(TRACK_KEY) || 'null'); } catch (e) { saved = null; }
+    var has = !!(saved && isFinite(saved.reading) && /^\d{4}-\d{2}-\d{2}$/.test(saved.date));
+    $('trackForget').hidden = !has;
+    if (!has) return false;
+    $('trackStart').value = String(saved.reading);
+    $('trackDate').value = saved.date;
+    if (selectMode) { var r = document.querySelector('input[name="readMode"][value="track"]'); if (r) r.checked = true; }
+    return true;
+  }
 
   function $(id) { return document.getElementById(id); }
   function each(list, fn) { Array.prototype.forEach.call(list, fn); }
@@ -190,26 +213,10 @@
     }
 
     var meter = checked('meterType');
-    var useSecond = meter === 'digital' && $('has2').checked;
+    var readMode = checked('readMode') || 'both';
+    var useSecond = readMode === 'both' && meter === 'digital' && $('has2').checked;
 
-    // energy used
-    var kwh = null;
-    var prev = numField('prev'), curr = numField('curr');
-    if (prev !== null && curr !== null) {
-      kwh = S.consumption(prev, curr);
-      if (kwh === null) err('curr', 'errLower', null, true);
-    }
-    if (useSecond) {
-      var prev2 = numField('prev2'), curr2 = numField('curr2'), kwh2 = null;
-      if (prev2 !== null && curr2 !== null) {
-        kwh2 = S.consumption(prev2, curr2);
-        if (kwh2 === null) err('curr2', 'errLower', null, true);
-      }
-      kwh = kwh !== null && kwh2 !== null ? kwh + kwh2 : null;
-    }
-    if (kwh !== null) kwh = Math.round(kwh * 1000) / 1000; // drop float noise from decimal readings
-
-    // billing period
+    // billing period (first: a daily use is turned into a whole bill with it)
     var mode = checked('periodMode'), months = null, fromDates = null;
     if (mode === 'dates') {
       var a = $('start').value, b = $('end').value;
@@ -225,6 +232,35 @@
       months = Number($('months').value);
       if (!(months >= 0.5 && months <= 12)) { err('months', 'errMonths'); months = null; }
     }
+
+    // energy used
+    var kwh = null, track = null;
+    if (readMode === 'track') {
+      var tStart = numField('trackStart'), tNow = numField('trackNow'), tDate = $('trackDate').value;
+      if (!tDate) err('trackDate', 'errRequired', null, true);
+      else if (tDate > todayISO()) { err('trackDate', 'errTrackFuture'); tDate = ''; }
+      if (tStart !== null && tNow !== null && tDate && months !== null) {
+        var pr = S.projectKwh(tStart, tDate, tNow, todayISO(), months);
+        if (!pr) err('trackDate', 'errDates');
+        else if (pr.lower) err('trackNow', 'errLower', null, true);
+        else if (pr.tooSoon) err('trackNow', 'trackWait');
+        else { kwh = pr.projected; track = pr; }
+      }
+    }
+    var prev = readMode === 'both' ? numField('prev') : null, curr = readMode === 'both' ? numField('curr') : null;
+    if (prev !== null && curr !== null) {
+      kwh = S.consumption(prev, curr);
+      if (kwh === null) err('curr', 'errLower', null, true);
+    }
+    if (useSecond) {
+      var prev2 = numField('prev2'), curr2 = numField('curr2'), kwh2 = null;
+      if (prev2 !== null && curr2 !== null) {
+        kwh2 = S.consumption(prev2, curr2);
+        if (kwh2 === null) err('curr2', 'errLower', null, true);
+      }
+      kwh = kwh !== null && kwh2 !== null ? kwh + kwh2 : null;
+    }
+    if (kwh !== null) kwh = Math.round(kwh * 1000) / 1000; // drop float noise from decimal readings
 
     // subscribed power
     var kva = null;
@@ -245,9 +281,9 @@
     var ok = !Object.keys(errs).length && kwh !== null && months !== null && kva !== null && ct && ct.available;
     var input = ok ? { totalKwh: kwh, months: months, kva: kva } : null;
     var est = ok ? ct.estimate(input) : null;
-    if (est && est.monthlyKwh > MAX_MONTHLY_KWH) warns.curr = { key: 'errTooBig', vars: { n: MAX_MONTHLY_KWH } };
+    if (est && est.monthlyKwh > MAX_MONTHLY_KWH) warns[readMode === 'track' ? 'trackNow' : 'curr'] = { key: 'errTooBig', vars: { n: MAX_MONTHLY_KWH } };
 
-    return { valid: !!est, errs: errs, warns: warns, est: est, input: input, ct: ct, fromDates: fromDates, meter: meter, useSecond: useSecond, mode: mode };
+    return { valid: !!est, errs: errs, warns: warns, est: est, input: input, ct: ct, fromDates: fromDates, meter: meter, useSecond: useSecond, mode: mode, readMode: readMode, track: track };
   }
 
   function readCal(main) {
@@ -314,7 +350,10 @@
   function syncVisibility() {
     var digital = checked('meterType') === 'digital';
     $('digital-note').hidden = !digital;
-    $('digital-second').hidden = !digital;
+    var track = checked('readMode') === 'track';
+    $('both-wrap').hidden = track;
+    $('track-wrap').hidden = !track;
+    $('digital-second').hidden = !digital || track;
     $('second-block').hidden = !(digital && $('has2').checked);
     var dates = checked('periodMode') === 'dates';
     $('months-wrap').hidden = dates;
@@ -339,12 +378,18 @@
     var forText = t('resFor', { kwh: iso(fmt(est.totalKwh)), months: monthsText(est.months) });
     $('res-for').textContent = forText;
 
-    var info = [
+    var info = main.track ? [
+      row(t('rowMeasured'), t('trackMeasured', { kwh: iso(fmt(main.track.used)), days: iso(String(main.track.days)) })),
+      row(t('rowDaily'), iso(main.track.daily.toFixed(1)) + ' ' + t('unitKwh')),
+      row(t('rowProjectedKwh'), iso(fmt(est.totalKwh)) + ' ' + t('unitKwh')),
+    ] : [
       row(t('rowTotalKwh'), iso(fmt(est.totalKwh)) + ' ' + t('unitKwh')),
+    ];
+    info.push(
       row(t('rowMonthlyKwh'), iso(est.monthlyKwh.toFixed(1)) + ' ' + t('unitKwhMonth')),
       row(t('rowTier'), t('tier_' + tier.id), 'wrap-ok'),
-      row(t('rowPrice'), iso(fmt(tier.price)) + ' ' + t('unitMillimesKwh')),
-    ];
+      row(t('rowPrice'), iso(fmt(tier.price)) + ' ' + t('unitMillimesKwh'))
+    );
     var L = est.lines;
     var lines = [
       row(t('rowEnergy'), money(L.energy)),
@@ -382,6 +427,7 @@
     fillRows($('res-info'), info);
     fillRows($('res-money'), lines);
     $('vat-note').hidden = main.ct.vatVerified();
+    $('track-note').hidden = !main.track;
 
     var cliffLines = renderCliff(main);
     renderChart(main);
@@ -587,6 +633,7 @@
   /* ---------------- events ---------------- */
 
   function init() {
+    loadTrack(true);
     var form = $('form');
 
     each(document.querySelectorAll('.lang-btn'), function (b) {
@@ -626,8 +673,30 @@
       form.reset();
       submitted = false;
       MAIN_FIELDS.forEach(function (id) { delete touched[id]; });
+      loadTrack(false); // a reading saved on this phone survives Clear
       update();
       $('prev').focus();
+    });
+
+    $('trackSave').addEventListener('click', function () {
+      var r = parseNumber($('trackNow').value);
+      if (r.empty || r.error) { showTrackStatus(t('trackNeedNow')); $('trackNow').focus(); return; }
+      var saved = { reading: r.value, date: todayISO() };
+      try { localStorage.setItem(TRACK_KEY, JSON.stringify(saved)); } catch (e) { /* storage blocked: still fill the fields */ }
+      $('trackForget').hidden = false;
+      $('trackStart').value = String(saved.reading);
+      $('trackDate').value = saved.date;
+      $('trackNow').value = '';
+      delete touched.trackNow;
+      update();
+      showTrackStatus(t('trackSaved', { kwh: iso(fmt(saved.reading)), date: iso(niceDate(saved.date)) }));
+    });
+    $('trackForget').addEventListener('click', function () {
+      try { localStorage.removeItem(TRACK_KEY); } catch (e) { /* ignore */ }
+      $('trackStart').value = ''; $('trackDate').value = ''; $('trackNow').value = '';
+      ['trackStart', 'trackDate', 'trackNow'].forEach(function (id) { delete touched[id]; });
+      update();
+      showTrackStatus(t('trackForgotten'));
     });
 
     $('calCompare').addEventListener('click', function () {

@@ -120,19 +120,64 @@
               <span class="step-num" aria-hidden="true">2</span>
               <h2 id="form-title" data-i18n="formTitle"></h2>
             </header>
-            <div class="grid2">
-              <div class="field">
-                <label for="prev" data-i18n="prevLabel"></label>
-                <input class="num" id="prev" name="prev" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="prev-hint prev-err">
-                <p class="hint" id="prev-hint" data-i18n="prevHint"></p>
-                <p class="msg" id="prev-err" hidden></p>
+            <fieldset class="field read-mode">
+              <legend class="sr-only" data-i18n="readModeLabel"></legend>
+              <div class="segmented">
+                <label class="seg-opt"><input type="radio" name="readMode" value="both" checked> <span data-i18n="readModeBoth"></span></label>
+                <label class="seg-opt"><input type="radio" name="readMode" value="track"> <span data-i18n="readModeTrack"></span></label>
+              </div>
+            </fieldset>
+
+            <div id="both-wrap">
+              <div class="grid2">
+                <div class="field">
+                  <label for="prev" data-i18n="prevLabel"></label>
+                  <input class="num" id="prev" name="prev" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="prev-hint prev-err">
+                  <p class="hint" id="prev-hint" data-i18n="prevHint"></p>
+                  <p class="msg" id="prev-err" hidden></p>
+                </div>
+                <div class="field">
+                  <label for="curr" data-i18n="currLabel"></label>
+                  <input class="num" id="curr" name="curr" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="curr-hint curr-err">
+                  <p class="hint" id="curr-hint" data-i18n="currHint"></p>
+                  <p class="msg" id="curr-err" hidden></p>
+                </div>
+              </div>
+  
+            </div>
+
+            <!-- No old reading: save one on the phone, come back later -->
+            <div id="track-wrap" hidden>
+              <div class="callout callout-info">
+                <svg class="callout-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 7v5l3 2" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <p data-i18n="trackIntro"></p>
+              </div>
+              <div class="grid2 track-grid">
+                <div class="field">
+                  <label for="trackStart" data-i18n="trackStartLabel"></label>
+                  <input class="num" id="trackStart" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="track-hint trackStart-err">
+                  <p class="msg" id="trackStart-err" hidden></p>
+                </div>
+                <div class="field">
+                  <label for="trackDate" data-i18n="trackDateLabel"></label>
+                  <input id="trackDate" type="date" aria-describedby="track-hint trackDate-err">
+                  <p class="msg" id="trackDate-err" hidden></p>
+                </div>
               </div>
               <div class="field">
-                <label for="curr" data-i18n="currLabel"></label>
-                <input class="num" id="curr" name="curr" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="curr-hint curr-err">
-                <p class="hint" id="curr-hint" data-i18n="currHint"></p>
-                <p class="msg" id="curr-err" hidden></p>
+                <label for="trackNow" data-i18n="trackNowLabel"></label>
+                <input class="num" id="trackNow" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="track-hint trackNow-err">
+                <p class="msg" id="trackNow-err" hidden></p>
               </div>
+              <div class="buttons track-buttons">
+                <button type="button" class="btn btn-secondary" id="trackSave">
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 3h11l3 3v15H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 3v5h7V3M8 14h8v7H8z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                  <span data-i18n="trackSave"></span>
+                </button>
+                <button type="button" class="btn btn-ghost" id="trackForget" hidden data-i18n="trackForget"></button>
+              </div>
+              <p class="track-status" id="track-status" role="status" hidden></p>
+              <p class="hint" id="track-hint" data-i18n="trackHint2"></p>
             </div>
 
             <!-- Digital meter: optional second register (1.8.2) -->
@@ -259,6 +304,7 @@
             <tbody id="res-money"></tbody>
           </table>
           <p class="note" id="vat-note" data-i18n="vatNote"></p>
+          <p class="note" id="track-note" hidden data-i18n="trackSeason"></p>
 
           <div class="cliff">
             <h3 data-i18n="cliffTitle"></h3>

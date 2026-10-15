@@ -74,6 +74,14 @@ eq('real bill: total', S.dt(real.total), '138.634');
 const pay = S.amountToPay(real.total, 0, 68657);
 eq('real bill: total - previous payments', S.dt(pay.due), '69.977');
 eq('real bill: amount to pay, rounded down to the dinar', S.dt(pay.rounded), '69.000');
+// no old reading: two readings some days apart -> daily use -> a whole bill
+const pj = S.projectKwh(1000, '2026-10-01', 1070, '2026-10-15', 2);
+eq('track: days between readings', pj.days, 14);
+eq('track: kWh per day', pj.daily, 5);
+eq('track: a 2-month bill at 5 kWh/day', pj.projected, 304);
+eq('track: same day is too soon', S.projectKwh(1000, '2026-10-15', 1004, '2026-10-15', 2).tooSoon, true);
+eq('track: lower second reading', S.projectKwh(1000, '2026-10-01', 990, '2026-10-15', 2).lower, true);
+eq('track: one day is enough to start', S.projectKwh(500, '2026-10-14', 506, '2026-10-15', 1).projected, 182);
 eq('arrears are added', S.amountToPay(50000, 12500, 0).due, 62500);
 eq('paid more than the bill = credit', S.amountToPay(30000, 0, 45000).credit, 15000);
 eq('lower current reading', S.consumption(500, 400), null);

@@ -13,6 +13,7 @@ A free, static website that estimates a Tunisian household's **STEG electricity 
 - The result: estimated total in DT, energy used and per month, the **tier** and its price, energy, power fee, municipal surtax, FTE, VAT, an optional correction, the total and the real cost per kWh.
 - **The "cliff" helper:** STEG tiers are not cumulative (the tier you reach sets the price of *every* kWh), so the page tells you how many kWh per month separate you from the next tier, and what it would cost or save.
 - **Calibration (optional):** enter your last real bill; the tool compares its own estimate for it with what you paid and can apply the difference to the new estimate.
+- **No old reading?** (no bill, or it never arrived): choose "I only know today's reading", save today's reading on the phone, and come back days later with a new one. The daily use (e.g. 70 kWh in 14 days = 5 kWh/day) becomes the kWh of a whole bill (months x 30.4 days), then the normal calculation runs. Nothing leaves the phone: the saved reading is in the browser's storage, with a button to forget it.
 - **Amount to pay (optional):** like the bottom of a STEG bill, unpaid amounts from earlier bills ("arriérés") are added and previous payments ("paiements précédents", e.g. an estimated bill already paid) are taken off; the amount to pay is shown rounded down to the dinar, as on the bill, or as a credit if you paid more.
 - Copy the result, print it, light and dark mode, a "how to read your meter" guide and a short FAQ.
 
@@ -57,7 +58,7 @@ Add a dictionary to `i18n.js` with **exactly the same keys** as `en` (keep every
 node test.js
 ```
 
-No install needed (Node only). They cover a real printed STEG bill and 17 bills from STEG's own simulator (to the millime), the published sanity cases (150, 250, 350, 450, 550 kWh), every tier boundary (100, 101, 200, 201, 300, 301, 500, 501), the economic tier, the 2-month case (450 kWh over 2 months = 225 kWh/month -> 218 millimes on all 450 kWh), taxes, the cliff helper, calibration and the translations.
+No install needed (Node only). They cover the no-old-reading projection, a real printed STEG bill and 17 bills from STEG's own simulator (to the millime), the published sanity cases (150, 250, 350, 450, 550 kWh), every tier boundary (100, 101, 200, 201, 300, 301, 500, 501), the economic tier, the 2-month case (450 kWh over 2 months = 225 kWh/month -> 218 millimes on all 450 kWh), taxes, the cliff helper, calibration and the translations.
 
 ## Deploy for free
 

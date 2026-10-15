@@ -122,6 +122,22 @@
   }
 
   /**
+   * No old reading? Two readings taken some days apart give the daily use, and the daily use
+   * gives the kWh of a whole bill (months x 30.4 days). Dates are "YYYY-MM-DD".
+   * Returns { tooSoon } (less than a day apart), { lower } (second reading lower), or the projection.
+   */
+  function projectKwh(startReading, startDate, nowReading, nowDate, months) {
+    var a = new Date(startDate), b = new Date(nowDate);
+    if (isNaN(a) || isNaN(b) || !(months > 0)) return null;
+    var days = Math.round((b - a) / 86400000);
+    if (days < 1) return { tooSoon: true, days: days };
+    var used = nowReading - startReading;
+    if (used < 0) return { lower: true };
+    var daily = used / days;
+    return { days: days, used: used, daily: daily, projected: Math.round(daily * months * 30.4) };
+  }
+
+  /**
    * What is left to pay once earlier bills are counted (all in millimes), as at the bottom of a
    * STEG bill: total + unpaid from earlier bills ("arriérés") - payments already made
    * ("paiements précédents"). STEG bills show the amount to pay rounded DOWN to the whole dinar.
@@ -138,6 +154,6 @@
     return (neg ? '-' : '') + s;
   }
 
-  var api = { amountToPay: amountToPay, monthsBetween: monthsBetween, consumption: consumption, findTier: findTier, vatRate: vatRate, estimate: estimate, cliff: cliff, calibrate: calibrate, dt: dt };
+  var api = { projectKwh: projectKwh, amountToPay: amountToPay, monthsBetween: monthsBetween, consumption: consumption, findTier: findTier, vatRate: vatRate, estimate: estimate, cliff: cliff, calibrate: calibrate, dt: dt };
   if (typeof module !== 'undefined') module.exports = api; else root.STEG = api;
 })(this);
