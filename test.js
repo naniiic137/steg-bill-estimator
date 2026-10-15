@@ -96,7 +96,7 @@ const ph = (s) => (String(s).match(/\{\w+\}/g) || []).sort().join(',');
 for (const lang of Object.keys(I).filter((l) => l !== 'en')) {
   for (const k of Object.keys(I.en)) {
     if (!(k in I[lang]) || !String(I[lang][k]).trim()) { fail++; console.log(`FAIL ${lang} is missing "${k}"`); continue; }
-    if (ph(I[lang][k]) !== ph(I.en[k])) { fail++; console.log(`FAIL ${lang}.${k} placeholders ${ph(I[lang][k])} vs ${ph(I.en[k])}`); continue; }
+    if (!/^(months|days)_/.test(k) && ph(I[lang][k]) !== ph(I.en[k])) { fail++; console.log(`FAIL ${lang}.${k} placeholders ${ph(I[lang][k])} vs ${ph(I.en[k])}`); continue; }
     if (/[٠-٩]/.test(I[lang][k])) { fail++; console.log(`FAIL ${lang}.${k} uses Eastern Arabic digits`); continue; }
     pass++;
   }

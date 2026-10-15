@@ -367,7 +367,7 @@ html[lang="ar"] .badge { text-transform: none; letter-spacing: 0; font-size: 0.8
 .cliff-top .cliff-icon { background: var(--muted); color: var(--surface); }
 
 /* tier chart: positioned with logical properties, so it mirrors in RTL */
-.chart-plot { padding-block-start: 36px; margin-block-start: 6px; }
+.chart-plot { padding-block-start: 46px; margin-block-start: 6px; }
 .chart-bar { position: relative; height: 40px; }
 .chart-segs { position: absolute; inset: 0; border-radius: 12px; overflow: hidden; background: var(--surface-3); }
 .chart-seg {
@@ -491,6 +491,7 @@ details.card[open] > summary::after { transform: rotate(180deg); }
     --bg: #fff; --surface: #fff; --surface-2: #f3f3f3; --surface-3: #eee; --text: #000; --muted: #333;
     --border: #999; --border-soft: #ccc; --hero-1: #fff; --hero-2: #fff; --hero-ink: #000; --hero-muted: #333;
     --err-bg: #fff; --ok-soft: #fff; --warn-bg: #fff;
+    --primary: #0b5ea8; --primary-soft: #e7f1fb; --primary-ink: #fff; --err: #b42318; --ok: #157a52; --warn: #8a5300;
     --tier-0: #c9ecc9; --tier-1: #a5dca5; --tier-2: #f9e38a; --tier-3: #f9c27c; --tier-4: #f6a07e; --tier-5: #ee7f7f; --tier-text: #000;
   }
   body { background: #fff; color: #000; font-size: 11pt; }
@@ -500,7 +501,8 @@ details.card[open] > summary::after { transform: rotate(180deg); }
   .col-side { position: static; }
   .card, .result { box-shadow: none; border: 1px solid #999; }
   .result { break-inside: auto; } /* a tall card may continue on the next page instead of leaving page 1 empty */
-  .res-hero, .breakdown tr, .cliff-list li, .chart, .disclaimer { break-inside: avoid; }
+  .res-hero, .breakdown tr, .cliff, .cliff-list li, .chart, .disclaimer { break-inside: avoid; }
+  .cliff h3, .chart h3 { break-after: avoid; }
   .appbar-inner { padding: 0 0 8px; }
   .res-hero { background: #fff; color: #000; border-block-end: 1px solid #ccc; }
   .badge { border: 1px solid #000; background: #fff; color: #000; }

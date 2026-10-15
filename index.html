@@ -20,9 +20,7 @@
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b3a5d'/%3E%3Cpath d='M18.5 4 8 18h7l-2.5 10L24 14h-7z' fill='%23ffc83d'/%3E%3C/svg%3E">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+  <link rel="stylesheet" href="fonts/fonts.css"> <!-- served from this site: no request leaves for Google -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -35,9 +33,9 @@
         <span data-i18n="appName"></span>
       </p>
       <div class="lang-switch" role="group" data-i18n-attr="aria-label:langLabel">
-        <button type="button" class="lang-btn" data-lang="ar" title="العربية" aria-pressed="false">ع</button>
-        <button type="button" class="lang-btn" data-lang="fr" title="Français" aria-pressed="false">FR</button>
-        <button type="button" class="lang-btn" data-lang="en" title="English" aria-pressed="false">EN</button>
+        <button type="button" class="lang-btn" data-lang="ar" lang="ar" title="العربية" aria-pressed="false">ع</button>
+        <button type="button" class="lang-btn" data-lang="fr" lang="fr" title="Français" aria-pressed="false">FR</button>
+        <button type="button" class="lang-btn" data-lang="en" lang="en" title="English" aria-pressed="false">EN</button>
       </div>
     </div>
   </header>
@@ -219,10 +217,10 @@
               <div id="months-wrap">
                 <label for="months" class="sr-only" data-i18n="periodByMonths"></label>
                 <select id="months" name="months" aria-describedby="period-hint months-err">
-                  <option value="1" data-i18n="month1"></option>
-                  <option value="2" selected data-i18n="monthN" data-i18n-vars='{"n":"2"}'></option>
-                  <option value="3" data-i18n="monthN" data-i18n-vars='{"n":"3"}'></option>
-                  <option value="4" data-i18n="monthN" data-i18n-vars='{"n":"4"}'></option>
+                  <option value="1" data-months="1"></option>
+                  <option value="2" selected data-months="2"></option>
+                  <option value="3" data-months="3"></option>
+                  <option value="4" data-months="4"></option>
                 </select>
                 <p class="msg" id="months-err" hidden></p>
               </div>

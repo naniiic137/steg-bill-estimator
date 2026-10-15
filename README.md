@@ -2,7 +2,7 @@
 
 A free, static website that estimates a Tunisian household's **STEG electricity bill** from its meter readings, with a clear line-by-line breakdown. Arabic (right to left), French and English. Made for phones first.
 
-**Private by design:** everything is calculated in the browser. No backend, no login, no tracking, nothing is sent anywhere.
+**Private by design:** everything is calculated in the browser. No backend, no login, no tracking, no outside requests (even the fonts are served from the site), nothing is sent anywhere.
 
 > This is an estimate. The real STEG bill is the only reference, tariffs can change, and this tool is **not affiliated with STEG** (Société Tunisienne de l'Electricité et du Gaz).
 
@@ -43,6 +43,7 @@ All of this lives in two files: the numbers in `tariffs.js`, the logic in `calc.
 | `tariffs.js` | **every tariff number and tax rate**, with the date they were last checked and the source |
 | `i18n.js` | every text in English, French and Arabic |
 | `test.js` | the tests (`node test.js`) |
+| `fonts/` | IBM Plex Sans and IBM Plex Sans Arabic (SIL Open Font License), served from the site itself so no request goes to Google |
 
 ## Update the tariffs
 

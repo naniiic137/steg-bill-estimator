@@ -121,7 +121,16 @@
   }
   function money(millimes) { return iso(S.dt(millimes)) + ' ' + t('unitDT'); }
   function signedMoney(millimes) { return iso((millimes > 0 ? '+' : '') + S.dt(millimes)) + ' ' + t('unitDT'); }
-  function monthsText(m) { return m === 1 ? t('month1') : t('monthN', { n: iso(fmt(m, 1)) }); }
+  /** "2 months", "شهرين", "3 أشهر", "12 شهرًا": the right plural form for the language. */
+  function plural(base, n) {
+    var cat = 'other';
+    try { cat = new Intl.PluralRules(lang).select(n); } catch (e) { cat = n === 1 ? 'one' : 'other'; }
+    var dict = I18N[lang] || I18N.en, key = base + '_' + cat;
+    if (!(key in dict)) key = base + '_other';
+    return t(key, { n: iso(fmt(n, 1)) });
+  }
+  function monthsText(m) { return plural('months', m); }
+  function daysText(d) { return plural('days', d); }
 
   /** Arabic-Indic digits to 0-9, decimal comma to dot, spaces removed. */
   function normalize(raw) {
@@ -174,7 +183,8 @@
     setMeta('meta[name="description"]', t('metaDescription'));
     setMeta('meta[property="og:title"]', t('metaTitle'));
     setMeta('meta[property="og:description"]', t('metaDescription'));
-    $('footer-verified').textContent = t('footerVerified', { date: iso(T.lastVerified) });
+    $('footer-verified').textContent = t('footerVerified', { date: iso(niceDate(T.lastVerified)) });
+    each(document.querySelectorAll('[data-months]'), function (o) { o.textContent = monthsText(Number(o.getAttribute('data-months'))); });
     $('footer-source').setAttribute('href', T.source);
     each(document.querySelectorAll('.lang-btn'), function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false');
@@ -225,8 +235,12 @@
       if (a && b) {
         var m = S.monthsBetween(a, b);
         if (m === null) err('end', 'errDates');
-        else if (m < 0.5 || m > 12) err('end', 'errMonths');
-        else months = fromDates = m;
+        else if (m > 12) err('end', 'errDatesTooLong');
+        else {
+          months = fromDates = m;
+          // bills count whole months: a few days still counts as 1 month
+          if ((new Date(b) - new Date(a)) / 86400000 < 20) warns.end = { key: 'warnShortPeriod', vars: null };
+        }
       }
     } else {
       months = Number($('months').value);
@@ -379,7 +393,7 @@
     $('res-for').textContent = forText;
 
     var info = main.track ? [
-      row(t('rowMeasured'), t('trackMeasured', { kwh: iso(fmt(main.track.used)), days: iso(String(main.track.days)) })),
+      row(t('rowMeasured'), t('trackMeasured', { kwh: iso(fmt(main.track.used)), days: daysText(main.track.days) })),
       row(t('rowDaily'), iso(main.track.daily.toFixed(1)) + ' ' + t('unitKwh')),
       row(t('rowProjectedKwh'), iso(fmt(est.totalKwh)) + ' ' + t('unitKwh')),
     ] : [
@@ -495,7 +509,7 @@
     var est = main.est, ct = main.ct;
     var tiers = ct.chartTiers(est.kva), order = ct.tierOrder();
     var monthly = est.monthlyKwh;
-    var max = Math.max(CHART_MIN_MAX, Math.ceil(monthly * 1.08));
+    var max = Math.max(est.tier.economic ? 250 : CHART_MIN_MAX, Math.ceil(monthly * 1.08)); // 0..250 makes the 50 / 100 economic tiers readable
     function pct(v) { return Math.max(0, Math.min(100, (v / max) * 100)); }
 
     var segs = $('chart-segs'), ticks = $('chart-ticks'), legend = $('chart-legend');
@@ -570,7 +584,7 @@
     var pay = readPay();
     renderMessages(PAY_FIELDS, pay.errs, null, true);
 
-    $('months-computed').textContent = main.fromDates !== null ? t('monthsComputed', { n: iso(fmt(main.fromDates)) }) : '';
+    $('months-computed').textContent = main.fromDates !== null ? t('monthsComputed', { months: monthsText(main.fromDates) }) : '';
 
     renderCalibration(main, cal);
     renderResult(main, cal.result, pay);
@@ -634,6 +648,15 @@
 
   function init() {
     loadTrack(true);
+    $('trackDate').max = todayISO();
+    ['trackStart', 'trackDate'].forEach(function (id) {
+      $(id).addEventListener('change', function () {
+        var s = parseNumber($('trackStart').value), d = $('trackDate').value;
+        if (s.empty || s.error || !d || d > todayISO()) return;
+        try { localStorage.setItem(TRACK_KEY, JSON.stringify({ reading: s.value, date: d })); } catch (e) { /* storage blocked */ }
+        $('trackForget').hidden = false;
+      });
+    });
     var form = $('form');
 
     each(document.querySelectorAll('.lang-btn'), function (b) {
@@ -670,17 +693,22 @@
     });
 
     $('clear').addEventListener('click', function () {
+      var keepMode = checked('readMode') || 'both';
       form.reset();
+      var rm = document.querySelector('input[name="readMode"][value="' + keepMode + '"]'); if (rm) rm.checked = true;
       submitted = false;
       MAIN_FIELDS.forEach(function (id) { delete touched[id]; });
       loadTrack(false); // a reading saved on this phone survives Clear
       update();
-      $('prev').focus();
+      $(keepMode === 'track' ? 'trackNow' : 'prev').focus();
     });
 
     $('trackSave').addEventListener('click', function () {
       var r = parseNumber($('trackNow').value);
       if (r.empty || r.error) { showTrackStatus(t('trackNeedNow')); $('trackNow').focus(); return; }
+      var oldStart = parseNumber($('trackStart').value), oldDate = $('trackDate').value;
+      if (!oldStart.empty && !oldStart.error && oldDate && oldDate !== todayISO() &&
+          !window.confirm(t('trackReplaceConfirm', { kwh: fmt(oldStart.value), date: niceDate(oldDate) }))) return;
       var saved = { reading: r.value, date: todayISO() };
       try { localStorage.setItem(TRACK_KEY, JSON.stringify(saved)); } catch (e) { /* storage blocked: still fill the fields */ }
       $('trackForget').hidden = false;
@@ -696,6 +724,7 @@
       $('trackStart').value = ''; $('trackDate').value = ''; $('trackNow').value = '';
       ['trackStart', 'trackDate', 'trackNow'].forEach(function (id) { delete touched[id]; });
       update();
+      $('trackForget').hidden = true;
       showTrackStatus(t('trackForgotten'));
     });
 
@@ -736,6 +765,10 @@
     new IntersectionObserver(function (entries) { resultOnScreen = entries[0].isIntersecting; sync(); }, { threshold: 0.12 }).observe(result);
   }
   new MutationObserver(sync).observe(result, { attributes: true, attributeFilter: ['hidden'], subtree: true, childList: true, characterData: true });
-  document.getElementById('totalbar-go').addEventListener('click', function () { result.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  document.getElementById('totalbar-go').addEventListener('click', function () {
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    result.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+    var title = document.getElementById('res-title'); if (title) title.focus({ preventScroll: true });
+  });
   sync();
 })();
