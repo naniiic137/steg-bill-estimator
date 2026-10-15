@@ -2,13 +2,13 @@
 <html lang="fr" dir="ltr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>STEG Bill Estimator: estimate your electricity bill</title>
   <meta name="description" content="Free tool to estimate your STEG electricity bill from your meter readings, with a line-by-line breakdown. Arabic, French, English. Nothing is sent anywhere.">
   <link rel="canonical" href="https://naniiic137.github.io/steg-bill-estimator/">
   <meta property="og:url" content="https://naniiic137.github.io/steg-bill-estimator/">
-  <meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#101317" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#0b3a5d" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a1622" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
 
   <meta property="og:type" content="website">
@@ -18,295 +18,338 @@
   <meta property="og:locale:alternate" content="ar_TN">
   <meta property="og:locale:alternate" content="en_US">
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f2b300'/%3E%3Cpath d='M18.5 3 7 18h7.5L12 29l12-16h-7.5z' fill='%23161a1f'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b3a5d'/%3E%3Cpath d='M18.5 4 8 18h7l-2.5 10L24 14h-7z' fill='%23ffc83d'/%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <a class="skip-link" href="#calculator" data-i18n="skipToForm"></a>
 
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="brand">
-        <svg class="brand-icon" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="7" fill="#f2b300"/><path d="M18.5 3 7 18h7.5L12 29l12-16h-7.5z" fill="#161a1f"/></svg>
+  <header class="appbar">
+    <div class="appbar-inner">
+      <p class="brand">
+        <svg class="brand-icon" viewBox="0 0 32 32" width="34" height="34" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="#ffc83d"/><path d="M18.5 4 8 18h7l-2.5 10L24 14h-7z" fill="#0b3a5d"/></svg>
         <span data-i18n="appName"></span>
-      </h1>
+      </p>
       <div class="lang-switch" role="group" data-i18n-attr="aria-label:langLabel">
-        <button type="button" class="lang-btn" data-lang="ar" title="العربية" aria-pressed="false">AR</button>
+        <button type="button" class="lang-btn" data-lang="ar" title="العربية" aria-pressed="false">ع</button>
         <button type="button" class="lang-btn" data-lang="fr" title="Français" aria-pressed="false">FR</button>
         <button type="button" class="lang-btn" data-lang="en" title="English" aria-pressed="false">EN</button>
       </div>
     </div>
   </header>
 
-  <main class="wrap">
-    <section class="intro">
-      <p class="tagline" data-i18n="tagline"></p>
-      <p data-i18n="introText"></p>
-      <p class="callout callout-privacy">
-        <svg class="callout-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4.5" y="10" width="15" height="11" rx="2" fill="currentColor"/></svg>
-        <span data-i18n="privacyNote"></span>
+  <section class="hero">
+    <div class="wrap">
+      <h1 class="hero-title" data-i18n="tagline"></h1>
+      <p class="hero-text" data-i18n="introText"></p>
+      <ul class="chips">
+        <li><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="chipSimulator"></span></li>
+        <li><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2.2"/><rect x="4.5" y="10" width="15" height="11" rx="2.5" fill="currentColor"/></svg><span data-i18n="chipPrivate"></span></li>
+        <li><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M12 3.5 14.6 9l6 .6-4.5 4 1.3 5.9L12 16.6l-5.4 2.9 1.3-5.9-4.5-4 6-.6z" fill="currentColor"/></svg><span data-i18n="chipFree"></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <main class="wrap layout">
+    <div class="col-main">
+      <div id="calculator" tabindex="-1">
+        <form id="form" class="steps" novalidate>
+          <!-- Step 1: the meter -->
+          <section class="card step" aria-labelledby="step1-title">
+            <header class="step-head">
+              <span class="step-num" aria-hidden="true">1</span>
+              <h2 id="step1-title" data-i18n="step1Title"></h2>
+            </header>
+            <fieldset class="field">
+              <legend class="sr-only" data-i18n="meterTypeLabel"></legend>
+              <div class="cards">
+                <label class="radio-card">
+                  <input type="radio" name="meterType" value="mechanical" checked aria-describedby="hint-mech">
+                  <svg class="mini-meter" viewBox="0 0 64 44" width="64" height="44" aria-hidden="true" focusable="false">
+                    <rect class="m-body" x="1" y="1" width="62" height="42" rx="7"/>
+                    <rect class="m-window" x="6" y="13" width="52" height="16" rx="3"/>
+                    <rect class="m-digit" x="8" y="15" width="7" height="12"/>
+                    <rect class="m-digit" x="16.5" y="15" width="7" height="12"/>
+                    <rect class="m-digit" x="25" y="15" width="7" height="12"/>
+                    <rect class="m-digit" x="33.5" y="15" width="7" height="12"/>
+                    <rect class="m-digit" x="42" y="15" width="7" height="12"/>
+                    <rect class="m-red" x="50.5" y="15" width="6" height="12"/>
+                    <rect class="m-slot" x="20" y="34" width="24" height="4" rx="2"/>
+                  </svg>
+                  <span class="radio-card-text">
+                    <span class="radio-card-title" data-i18n="meterMechanical"></span>
+                    <span class="radio-card-hint" id="hint-mech" aria-hidden="true" data-i18n="meterMechanicalHint"></span>
+                  </span>
+                  <span class="radio-tick" aria-hidden="true"></span>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="meterType" value="digital" aria-describedby="hint-dig">
+                  <svg class="mini-meter" viewBox="0 0 64 44" width="64" height="44" aria-hidden="true" focusable="false">
+                    <rect class="m-body" x="1" y="1" width="62" height="42" rx="7"/>
+                    <rect class="m-lcd" x="7" y="7" width="50" height="20" rx="3"/>
+                    <rect class="m-lcd-ink" x="10" y="10" width="12" height="3"/>
+                    <rect class="m-lcd-ink" x="22" y="17" width="31" height="7"/>
+                    <circle class="m-button" cx="32" cy="35" r="4"/>
+                    <circle class="m-led" cx="52" cy="35" r="2"/>
+                  </svg>
+                  <span class="radio-card-text">
+                    <span class="radio-card-title" data-i18n="meterDigital"></span>
+                    <span class="radio-card-hint" id="hint-dig" aria-hidden="true" data-i18n="meterDigitalHint"></span>
+                  </span>
+                  <span class="radio-tick" aria-hidden="true"></span>
+                </label>
+              </div>
+            </fieldset>
+            <p class="callout callout-warn" id="digital-note" hidden data-i18n="digitalMainNote"></p>
+            <div class="callout callout-info">
+              <svg class="callout-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 10.5v6M12 7.2v.1" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+              <div>
+                <p class="callout-title" data-i18n="serialNoteTitle"></p>
+                <p data-i18n="serialNote"></p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 2: the readings -->
+          <section class="card step" aria-labelledby="form-title">
+            <header class="step-head">
+              <span class="step-num" aria-hidden="true">2</span>
+              <h2 id="form-title" data-i18n="formTitle"></h2>
+            </header>
+            <div class="grid2">
+              <div class="field">
+                <label for="prev" data-i18n="prevLabel"></label>
+                <input class="num" id="prev" name="prev" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="prev-hint prev-err">
+                <p class="hint" id="prev-hint" data-i18n="prevHint"></p>
+                <p class="msg" id="prev-err" hidden></p>
+              </div>
+              <div class="field">
+                <label for="curr" data-i18n="currLabel"></label>
+                <input class="num" id="curr" name="curr" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="curr-hint curr-err">
+                <p class="hint" id="curr-hint" data-i18n="currHint"></p>
+                <p class="msg" id="curr-err" hidden></p>
+              </div>
+            </div>
+
+            <!-- Digital meter: optional second register (1.8.2) -->
+            <div id="digital-second" hidden>
+              <div class="check switch">
+                <input type="checkbox" id="has2" aria-controls="second-block">
+                <label for="has2" data-i18n="digitalSecondToggle"></label>
+              </div>
+              <div id="second-block" class="sub" hidden>
+                <p class="hint" id="second-note" data-i18n="digitalSecondNote"></p>
+                <div class="grid2">
+                  <div class="field">
+                    <label for="prev2" data-i18n="prev2Label"></label>
+                    <input class="num" id="prev2" name="prev2" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="second-note prev2-err">
+                    <p class="msg" id="prev2-err" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label for="curr2" data-i18n="curr2Label"></label>
+                    <input class="num" id="curr2" name="curr2" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="0" aria-describedby="second-note curr2-err">
+                    <p class="msg" id="curr2-err" hidden></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 3: period and power -->
+          <section class="card step" aria-labelledby="step3-title">
+            <header class="step-head">
+              <span class="step-num" aria-hidden="true">3</span>
+              <h2 id="step3-title" data-i18n="step3Title"></h2>
+            </header>
+            <fieldset class="field">
+              <legend data-i18n="periodLabel"></legend>
+              <div class="segmented">
+                <label class="seg-opt"><input type="radio" name="periodMode" value="months" checked> <span data-i18n="periodByMonths"></span></label>
+                <label class="seg-opt"><input type="radio" name="periodMode" value="dates"> <span data-i18n="periodByDates"></span></label>
+              </div>
+              <div id="months-wrap">
+                <label for="months" class="sr-only" data-i18n="periodByMonths"></label>
+                <select id="months" name="months" aria-describedby="period-hint months-err">
+                  <option value="1" data-i18n="month1"></option>
+                  <option value="2" selected data-i18n="monthN" data-i18n-vars='{"n":"2"}'></option>
+                  <option value="3" data-i18n="monthN" data-i18n-vars='{"n":"3"}'></option>
+                  <option value="4" data-i18n="monthN" data-i18n-vars='{"n":"4"}'></option>
+                </select>
+                <p class="msg" id="months-err" hidden></p>
+              </div>
+              <div id="dates-wrap" hidden>
+                <div class="grid2">
+                  <div class="field">
+                    <label for="start" data-i18n="startDate"></label>
+                    <input id="start" name="start" type="date" aria-describedby="period-hint start-err">
+                    <p class="msg" id="start-err" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label for="end" data-i18n="endDate"></label>
+                    <input id="end" name="end" type="date" aria-describedby="period-hint end-err">
+                    <p class="msg" id="end-err" hidden></p>
+                  </div>
+                </div>
+                <p class="computed" id="months-computed" aria-live="polite"></p>
+              </div>
+              <p class="hint" id="period-hint" data-i18n="periodHint"></p>
+            </fieldset>
+
+            <div class="grid2">
+              <div class="field">
+                <label for="kva" data-i18n="kvaLabel"></label>
+                <select id="kva" name="kva" aria-describedby="kva-hint">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="5" selected>5</option>
+                  <option value="6">6</option>
+                  <option value="9">9</option>
+                  <option value="12">12</option>
+                  <option value="other" data-i18n="kvaOther"></option>
+                </select>
+                <div id="kva-other-wrap" class="sub" hidden>
+                  <label for="kvaOther" data-i18n="kvaOtherLabel"></label>
+                  <input class="num" id="kvaOther" name="kvaOther" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="kva-hint kvaOther-err">
+                  <p class="msg" id="kvaOther-err" hidden></p>
+                </div>
+              </div>
+              <div class="field">
+                <label for="customer" data-i18n="housingLabel"></label>
+                <select id="customer" name="customer">
+                  <option value="residential" selected data-i18n="housingResidential"></option>
+                  <option value="nonResidential" disabled data-i18n="housingNonResidential"></option>
+                </select>
+              </div>
+            </div>
+            <p class="hint" id="kva-hint" data-i18n="kvaHint"></p>
+
+            <div class="buttons">
+              <button type="submit" class="btn btn-primary" data-i18n="calcButton"></button>
+              <button type="button" class="btn btn-ghost" id="clear" data-i18n="resetButton"></button>
+            </div>
+          </section>
+        </form>
+      </div>
+
+    </div>
+
+    <aside class="col-side">
+      <!-- Result -->
+      <section id="result" class="card result" aria-labelledby="res-title" hidden>
+        <div class="res-hero">
+          <div class="res-head">
+            <h2 id="res-title" tabindex="-1" data-i18n="resTitle"></h2>
+            <span class="badge" data-i18n="resBadge"></span>
+          </div>
+          <p class="total-label" data-i18n="resTotalLabel"></p>
+          <p class="total" id="res-total" aria-live="polite" aria-atomic="true"></p>
+          <p class="res-for" id="res-for"></p>
+        </div>
+
+        <div class="res-body">
+          <table class="breakdown">
+            <caption class="sr-only" data-i18n="resTitle"></caption>
+            <tbody id="res-info"></tbody>
+            <tbody id="res-money"></tbody>
+          </table>
+          <p class="note" id="vat-note" data-i18n="vatNote"></p>
+
+          <div class="cliff">
+            <h3 data-i18n="cliffTitle"></h3>
+            <p class="muted" data-i18n="cliffExplain"></p>
+            <ul class="cliff-list" id="cliff-list"></ul>
+          </div>
+
+          <div class="chart">
+            <h3 data-i18n="chartTitle"></h3>
+            <div class="chart-plot" aria-hidden="true">
+              <div class="chart-bar">
+                <div class="chart-segs" id="chart-segs"></div>
+                <div class="chart-you" id="chart-you"><span class="chart-you-label" id="chart-you-label"></span></div>
+              </div>
+              <div class="chart-ticks" id="chart-ticks"></div>
+              <p class="chart-unit" data-i18n="unitKwhMonth"></p>
+            </div>
+            <ul class="chart-legend" id="chart-legend"></ul>
+          </div>
+
+          <div class="buttons res-actions">
+            <button type="button" class="btn btn-secondary" id="copy">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><rect x="8" y="8" width="12" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              <span data-i18n="copyButton"></span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="print">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6" y="14" width="12" height="7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              <span data-i18n="printButton"></span>
+            </button>
+            <span class="copy-status" id="copy-status" role="status"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shown until there is a result -->
+      <div class="card res-empty">
+        <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true" focusable="false"><rect x="10" y="6" width="44" height="52" rx="8" fill="currentColor" opacity=".12"/><rect x="18" y="16" width="28" height="4" rx="2" fill="currentColor" opacity=".45"/><rect x="18" y="26" width="20" height="4" rx="2" fill="currentColor" opacity=".3"/><rect x="18" y="36" width="24" height="4" rx="2" fill="currentColor" opacity=".3"/><path d="M38 40 30 52h5l-2 8 9-12h-5z" fill="#ffc83d"/></svg>
+        <p data-i18n="resEmpty"></p>
+      </div>
+
+      <!-- Optional calibration with the last real bill -->
+      <details class="card cal" id="cal">
+        <summary>
+          <svg class="sum-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M4 18 9.5 12.5l4 4L20 10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 10h5v5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-i18n="calTitle"></span>
+        </summary>
+        <div class="details-body">
+          <p class="muted" data-i18n="calIntro"></p>
+          <div class="grid2">
+            <div class="field">
+              <label for="calKwh" data-i18n="calKwh"></label>
+              <input class="num" id="calKwh" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="calKwh-err">
+              <p class="msg" id="calKwh-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="calMonths" data-i18n="calMonths"></label>
+              <input class="num" id="calMonths" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="calMonths-err">
+              <p class="msg" id="calMonths-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="calKva" data-i18n="calKva"></label>
+              <input class="num" id="calKva" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="calKva-err">
+              <p class="msg" id="calKva-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="calPaid" data-i18n="calPaid"></label>
+              <input class="num" id="calPaid" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="calPaid-err">
+              <p class="msg" id="calPaid-err" hidden></p>
+            </div>
+          </div>
+          <div class="buttons">
+            <button type="button" class="btn btn-secondary" id="calCompare" data-i18n="calCompare"></button>
+          </div>
+          <div class="cal-out" id="cal-out" aria-live="polite">
+            <p id="cal-msg"></p>
+            <p id="cal-verdict" class="cal-verdict" hidden></p>
+          </div>
+          <div class="check switch" id="calApplyWrap" hidden>
+            <input type="checkbox" id="calApply">
+            <label for="calApply" data-i18n="calApply"></label>
+          </div>
+        </div>
+      </details>
+
+      <p class="disclaimer" id="disclaimer">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v6M12 16v1.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <span data-i18n="disclaimer"></span>
       </p>
-    </section>
+    </aside>
+  </main>
 
-    <section id="calculator" class="card" aria-labelledby="form-title" tabindex="-1">
-      <h2 id="form-title" data-i18n="formTitle"></h2>
-
-      <form id="form" novalidate>
-        <!-- Meter type -->
-        <fieldset class="field">
-          <legend data-i18n="meterTypeLabel"></legend>
-          <div class="cards">
-            <label class="radio-card">
-              <input type="radio" name="meterType" value="mechanical" checked aria-describedby="hint-mech">
-              <svg class="mini-meter" viewBox="0 0 64 44" width="64" height="44" aria-hidden="true" focusable="false">
-                <rect class="m-body" x="1" y="1" width="62" height="42" rx="6"/>
-                <rect class="m-window" x="6" y="13" width="52" height="16" rx="2"/>
-                <rect class="m-digit" x="8" y="15" width="7" height="12"/>
-                <rect class="m-digit" x="16.5" y="15" width="7" height="12"/>
-                <rect class="m-digit" x="25" y="15" width="7" height="12"/>
-                <rect class="m-digit" x="33.5" y="15" width="7" height="12"/>
-                <rect class="m-digit" x="42" y="15" width="7" height="12"/>
-                <rect class="m-red" x="50.5" y="15" width="6" height="12"/>
-                <rect class="m-slot" x="20" y="34" width="24" height="4" rx="2"/>
-              </svg>
-              <span class="radio-card-text">
-                <span class="radio-card-title" data-i18n="meterMechanical"></span>
-                <span class="radio-card-hint" id="hint-mech" aria-hidden="true" data-i18n="meterMechanicalHint"></span>
-              </span>
-            </label>
-            <label class="radio-card">
-              <input type="radio" name="meterType" value="digital" aria-describedby="hint-dig">
-              <svg class="mini-meter" viewBox="0 0 64 44" width="64" height="44" aria-hidden="true" focusable="false">
-                <rect class="m-body" x="1" y="1" width="62" height="42" rx="6"/>
-                <rect class="m-lcd" x="7" y="7" width="50" height="20" rx="2"/>
-                <rect class="m-lcd-ink" x="10" y="10" width="12" height="3"/>
-                <rect class="m-lcd-ink" x="22" y="17" width="31" height="7"/>
-                <circle class="m-button" cx="32" cy="35" r="4"/>
-                <circle class="m-led" cx="52" cy="35" r="2"/>
-              </svg>
-              <span class="radio-card-text">
-                <span class="radio-card-title" data-i18n="meterDigital"></span>
-                <span class="radio-card-hint" id="hint-dig" aria-hidden="true" data-i18n="meterDigitalHint"></span>
-              </span>
-            </label>
-          </div>
-        </fieldset>
-
-        <p class="callout" id="digital-note" hidden data-i18n="digitalMainNote"></p>
-
-        <div class="callout callout-info">
-          <p class="callout-title" data-i18n="serialNoteTitle"></p>
-          <p data-i18n="serialNote"></p>
-        </div>
-
-        <!-- Readings -->
-        <div class="grid2">
-          <div class="field">
-            <label for="prev" data-i18n="prevLabel"></label>
-            <p class="hint" id="prev-hint" data-i18n="prevHint"></p>
-            <input class="num" id="prev" name="prev" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="prev-hint prev-err">
-            <p class="msg" id="prev-err" hidden></p>
-          </div>
-          <div class="field">
-            <label for="curr" data-i18n="currLabel"></label>
-            <p class="hint" id="curr-hint" data-i18n="currHint"></p>
-            <input class="num" id="curr" name="curr" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="curr-hint curr-err">
-            <p class="msg" id="curr-err" hidden></p>
-          </div>
-        </div>
-
-        <!-- Digital meter: optional second register (1.8.2) -->
-        <div id="digital-second" hidden>
-          <div class="check">
-            <input type="checkbox" id="has2" aria-controls="second-block">
-            <label for="has2" data-i18n="digitalSecondToggle"></label>
-          </div>
-          <div id="second-block" class="sub" hidden>
-            <p class="hint" id="second-note" data-i18n="digitalSecondNote"></p>
-            <div class="grid2">
-              <div class="field">
-                <label for="prev2" data-i18n="prev2Label"></label>
-                <input class="num" id="prev2" name="prev2" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="second-note prev2-err">
-                <p class="msg" id="prev2-err" hidden></p>
-              </div>
-              <div class="field">
-                <label for="curr2" data-i18n="curr2Label"></label>
-                <input class="num" id="curr2" name="curr2" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="second-note curr2-err">
-                <p class="msg" id="curr2-err" hidden></p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Billing period -->
-        <fieldset class="field">
-          <legend data-i18n="periodLabel"></legend>
-          <div class="segmented">
-            <label class="seg-opt"><input type="radio" name="periodMode" value="months" checked> <span data-i18n="periodByMonths"></span></label>
-            <label class="seg-opt"><input type="radio" name="periodMode" value="dates"> <span data-i18n="periodByDates"></span></label>
-          </div>
-          <p class="hint" id="period-hint" data-i18n="periodHint"></p>
-          <div id="months-wrap">
-            <label for="months" class="sr-only" data-i18n="periodByMonths"></label>
-            <select id="months" name="months" aria-describedby="period-hint months-err">
-              <option value="1" data-i18n="month1"></option>
-              <option value="2" selected data-i18n="monthN" data-i18n-vars='{"n":"2"}'></option>
-              <option value="3" data-i18n="monthN" data-i18n-vars='{"n":"3"}'></option>
-              <option value="4" data-i18n="monthN" data-i18n-vars='{"n":"4"}'></option>
-            </select>
-            <p class="msg" id="months-err" hidden></p>
-          </div>
-          <div id="dates-wrap" hidden>
-            <div class="grid2">
-              <div class="field">
-                <label for="start" data-i18n="startDate"></label>
-                <input id="start" name="start" type="date" aria-describedby="period-hint start-err">
-                <p class="msg" id="start-err" hidden></p>
-              </div>
-              <div class="field">
-                <label for="end" data-i18n="endDate"></label>
-                <input id="end" name="end" type="date" aria-describedby="period-hint end-err">
-                <p class="msg" id="end-err" hidden></p>
-              </div>
-            </div>
-            <p class="computed" id="months-computed" aria-live="polite"></p>
-          </div>
-        </fieldset>
-
-        <!-- Subscribed power -->
-        <div class="field">
-          <label for="kva" data-i18n="kvaLabel"></label>
-          <p class="hint" id="kva-hint" data-i18n="kvaHint"></p>
-          <select id="kva" name="kva" aria-describedby="kva-hint">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="5" selected>5</option>
-            <option value="6">6</option>
-            <option value="9">9</option>
-            <option value="12">12</option>
-            <option value="other" data-i18n="kvaOther"></option>
-          </select>
-          <div id="kva-other-wrap" class="sub" hidden>
-            <label for="kvaOther" data-i18n="kvaOtherLabel"></label>
-            <input class="num" id="kvaOther" name="kvaOther" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="kva-hint kvaOther-err">
-            <p class="msg" id="kvaOther-err" hidden></p>
-          </div>
-        </div>
-
-        <!-- Customer type (only residential for now) -->
-        <div class="field">
-          <label for="customer" data-i18n="housingLabel"></label>
-          <select id="customer" name="customer">
-            <option value="residential" selected data-i18n="housingResidential"></option>
-            <option value="nonResidential" disabled data-i18n="housingNonResidential"></option>
-          </select>
-        </div>
-
-        <div class="buttons">
-          <button type="submit" class="btn btn-primary" data-i18n="calcButton"></button>
-          <button type="button" class="btn" id="clear" data-i18n="resetButton"></button>
-        </div>
-      </form>
-    </section>
-
-    <!-- Result -->
-    <section id="result" class="card result" aria-labelledby="res-title" hidden>
-      <div class="res-head">
-        <h2 id="res-title" tabindex="-1" data-i18n="resTitle"></h2>
-        <span class="badge" data-i18n="resBadge"></span>
-      </div>
-      <p class="total-label" data-i18n="resTotalLabel"></p>
-      <p class="total" id="res-total" aria-live="polite" aria-atomic="true"></p>
-      <p class="res-for" id="res-for"></p>
-
-      <table class="breakdown">
-        <caption class="sr-only" data-i18n="resTitle"></caption>
-        <tbody id="res-info"></tbody>
-        <tbody id="res-money"></tbody>
-      </table>
-      <p class="note" id="vat-note" data-i18n="vatNote"></p>
-
-      <div class="cliff">
-        <h3 data-i18n="cliffTitle"></h3>
-        <p data-i18n="cliffExplain"></p>
-        <ul class="cliff-list" id="cliff-list"></ul>
-      </div>
-
-      <div class="chart">
-        <h3 data-i18n="chartTitle"></h3>
-        <div class="chart-plot" aria-hidden="true">
-          <div class="chart-bar">
-            <div class="chart-segs" id="chart-segs"></div>
-            <div class="chart-you" id="chart-you"><span class="chart-you-label" id="chart-you-label"></span></div>
-          </div>
-          <div class="chart-ticks" id="chart-ticks"></div>
-          <p class="chart-unit" data-i18n="unitKwhMonth"></p>
-        </div>
-        <ul class="chart-legend" id="chart-legend"></ul>
-      </div>
-
-      <div class="buttons res-actions">
-        <button type="button" class="btn" id="copy">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><rect x="8" y="8" width="12" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-          <span data-i18n="copyButton"></span>
-        </button>
-        <button type="button" class="btn" id="print">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6" y="14" width="12" height="7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-          <span data-i18n="printButton"></span>
-        </button>
-        <span class="copy-status" id="copy-status" role="status"></span>
-      </div>
-    </section>
-
-    <p class="disclaimer" id="disclaimer">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v6M12 16v1.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-      <span data-i18n="disclaimer"></span>
-    </p>
-
-    <!-- Optional calibration with the last real bill -->
-    <details class="card cal" id="cal">
-      <summary data-i18n="calTitle"></summary>
-      <p data-i18n="calIntro"></p>
-      <div class="grid2">
-        <div class="field">
-          <label for="calKwh" data-i18n="calKwh"></label>
-          <input class="num" id="calKwh" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="calKwh-err">
-          <p class="msg" id="calKwh-err" hidden></p>
-        </div>
-        <div class="field">
-          <label for="calMonths" data-i18n="calMonths"></label>
-          <input class="num" id="calMonths" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="calMonths-err">
-          <p class="msg" id="calMonths-err" hidden></p>
-        </div>
-        <div class="field">
-          <label for="calKva" data-i18n="calKva"></label>
-          <input class="num" id="calKva" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="calKva-err">
-          <p class="msg" id="calKva-err" hidden></p>
-        </div>
-        <div class="field">
-          <label for="calPaid" data-i18n="calPaid"></label>
-          <input class="num" id="calPaid" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="calPaid-err">
-          <p class="msg" id="calPaid-err" hidden></p>
-        </div>
-      </div>
-      <div class="buttons">
-        <button type="button" class="btn" id="calCompare" data-i18n="calCompare"></button>
-      </div>
-      <div class="cal-out" id="cal-out" aria-live="polite">
-        <p id="cal-msg"></p>
-        <p id="cal-verdict" class="cal-verdict" hidden></p>
-      </div>
-      <div class="check" id="calApplyWrap" hidden>
-        <input type="checkbox" id="calApply">
-        <label for="calApply" data-i18n="calApply"></label>
-      </div>
-    </details>
-
+  <div class="wrap extras">
     <!-- How to read your meter -->
     <section class="card guide" aria-labelledby="guide-title">
       <h2 id="guide-title" data-i18n="guideTitle"></h2>
@@ -315,16 +358,16 @@
           <h3 data-i18n="guideMechTitle"></h3>
           <figure>
             <svg class="meter-fig" viewBox="0 0 240 180" aria-hidden="true" focusable="false">
-              <rect class="m-body" x="6" y="6" width="228" height="168" rx="14"/>
-              <rect class="m-plate" x="20" y="20" width="200" height="140" rx="8"/>
-              <rect class="m-window" x="30" y="40" width="180" height="48" rx="6"/>
+              <rect class="m-body" x="6" y="6" width="228" height="168" rx="16"/>
+              <rect class="m-plate" x="20" y="20" width="200" height="140" rx="10"/>
+              <rect class="m-window" x="30" y="40" width="180" height="48" rx="7"/>
               <g class="m-digits">
-                <rect class="m-digit" x="36" y="46" width="26" height="36" rx="2"/>
-                <rect class="m-digit" x="65" y="46" width="26" height="36" rx="2"/>
-                <rect class="m-digit" x="94" y="46" width="26" height="36" rx="2"/>
-                <rect class="m-digit" x="123" y="46" width="26" height="36" rx="2"/>
-                <rect class="m-digit" x="152" y="46" width="26" height="36" rx="2"/>
-                <rect class="m-red" x="181" y="46" width="24" height="36" rx="2"/>
+                <rect class="m-digit" x="36" y="46" width="26" height="36" rx="3"/>
+                <rect class="m-digit" x="65" y="46" width="26" height="36" rx="3"/>
+                <rect class="m-digit" x="94" y="46" width="26" height="36" rx="3"/>
+                <rect class="m-digit" x="123" y="46" width="26" height="36" rx="3"/>
+                <rect class="m-digit" x="152" y="46" width="26" height="36" rx="3"/>
+                <rect class="m-red" x="181" y="46" width="24" height="36" rx="3"/>
                 <text x="49" y="73">5</text>
                 <text x="78" y="73">8</text>
                 <text x="107" y="73">6</text>
@@ -348,9 +391,9 @@
           <h3 data-i18n="guideDigTitle"></h3>
           <figure>
             <svg class="meter-fig" viewBox="0 0 240 180" aria-hidden="true" focusable="false">
-              <rect class="m-body" x="6" y="6" width="228" height="168" rx="14"/>
-              <rect class="m-plate" x="20" y="20" width="200" height="140" rx="8"/>
-              <rect class="m-lcd" x="34" y="34" width="172" height="72" rx="6"/>
+              <rect class="m-body" x="6" y="6" width="228" height="168" rx="16"/>
+              <rect class="m-plate" x="20" y="20" width="200" height="140" rx="10"/>
+              <rect class="m-lcd" x="34" y="34" width="172" height="72" rx="7"/>
               <text class="m-lcd-code" x="44" y="56">1.8.1</text>
               <text class="m-lcd-unit" x="196" y="56">kWh</text>
               <text class="m-lcd-value" x="196" y="94">058628</text>
@@ -368,7 +411,7 @@
           </ol>
         </article>
       </div>
-      <p class="callout" data-i18n="guideCheckBill"></p>
+      <p class="callout callout-info" data-i18n="guideCheckBill"></p>
     </section>
 
     <!-- FAQ -->
@@ -380,16 +423,26 @@
       <details><summary data-i18n="faq4q"></summary><p data-i18n="faq4a"></p></details>
       <details><summary data-i18n="faq5q"></summary><p data-i18n="faq5a"></p></details>
     </section>
-  </main>
+  </div>
 
   <footer class="footer">
-    <div class="wrap">
+    <div class="wrap footer-inner">
+      <p class="footer-brand"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="#ffc83d"/><path d="M18.5 4 8 18h7l-2.5 10L24 14h-7z" fill="#0b3a5d"/></svg><span data-i18n="appName"></span></p>
       <p data-i18n="footerNotAffiliated"></p>
       <p id="footer-verified"></p>
       <p><a id="footer-source" href="https://www.steg.com.tn/" rel="noopener noreferrer" data-i18n="footerSource"></a></p>
       <p data-i18n="footerPrivacy"></p>
     </div>
   </footer>
+
+  <!-- Phone: the total follows you down the page until the result is on screen -->
+  <div class="totalbar" id="totalbar" hidden>
+    <div class="totalbar-inner">
+      <span class="totalbar-label" data-i18n="resTotalLabel"></span>
+      <span class="totalbar-value" id="totalbar-value"></span>
+      <button type="button" class="btn btn-primary btn-sm" id="totalbar-go" data-i18n="barView"></button>
+    </div>
+  </div>
 
   <script src="tariffs.js"></script>
   <script src="calc.js"></script>

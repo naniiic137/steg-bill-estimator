@@ -618,3 +618,24 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
+
+// Phone: the estimated total follows you down the page until the result itself is on screen.
+(function () {
+  var bar = document.getElementById('totalbar'), result = document.getElementById('result');
+  var total = document.getElementById('res-total'), value = document.getElementById('totalbar-value');
+  if (!bar || !result || !total || !value) return;
+  var resultOnScreen = false;
+  function sync() {
+    var has = !result.hidden && total.textContent.trim() !== '';
+    value.textContent = total.textContent;
+    var show = has && !resultOnScreen;
+    bar.hidden = !show;
+    document.body.classList.toggle('has-totalbar', show);
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) { resultOnScreen = entries[0].isIntersecting; sync(); }, { threshold: 0.12 }).observe(result);
+  }
+  new MutationObserver(sync).observe(result, { attributes: true, attributeFilter: ['hidden'], subtree: true, childList: true, characterData: true });
+  document.getElementById('totalbar-go').addEventListener('click', function () { result.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  sync();
+})();
