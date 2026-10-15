@@ -1,5 +1,7 @@
 # STEG Bill Estimator
 
+**Live: [fatoura.pages.dev](https://fatoura.pages.dev)**
+
 A free, static website that estimates a Tunisian household's **STEG electricity bill** from its meter readings, with a clear line-by-line breakdown. Arabic (right to left), French and English. Made for phones first.
 
 **Private by design:** everything is calculated in the browser. No backend, no login, no tracking, no outside requests (even the fonts are served from the site), nothing is sent anywhere.
@@ -65,7 +67,7 @@ No install needed (Node only). They cover the no-old-reading projection, a real 
 
 It is plain files with no build step, so any static host works:
 - **GitHub Pages:** repository Settings -> Pages -> deploy from the `main` branch, folder `/`.
-- **Cloudflare Pages / Netlify:** connect the repository, no build command, output folder `/`.
+- **Cloudflare Pages / Netlify:** connect the repository, no build command, output folder `/`. (The live site is on Cloudflare Pages: every push to `main` updates fatoura.pages.dev; GitHub Pages still serves the old address.)
 - Or just open `index.html` from disk.
 
 ## Assumptions to verify
