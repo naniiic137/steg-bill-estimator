@@ -60,6 +60,22 @@ eq('calibration for a 3-month bill', cal.adjustment, 15000);
 
 // helpers
 eq('months from dates', S.monthsBetween('2026-08-01', '2026-10-01'), 2);
+eq('months from dates: whole months like a real bill (115 days = 4)', S.monthsBetween('2025-12-26', '2026-04-20'), 4);
+
+// a real printed STEG bill (15/10/2026, numbers only): 620 kWh, 4 months, 3 kVA, residential
+const real = S.estimate({ totalKwh: 620, months: 4, kva: 3 }, T);
+eq('real bill: energy', S.dt(real.lines.energy), '109.120');
+eq('real bill: power fee', S.dt(real.lines.powerFee), '8.400');
+eq('real bill: CL', S.dt(real.lines.surtax), '3.100');
+eq('real bill: FTE', S.dt(real.lines.fte), '3.100');
+eq('real bill: RTT', S.dt(real.lines.rtt), '5.680');
+eq('real bill: VAT', S.dt(real.lines.vat), '9.234');
+eq('real bill: total', S.dt(real.total), '138.634');
+const pay = S.amountToPay(real.total, 0, 68657);
+eq('real bill: total - previous payments', S.dt(pay.due), '69.977');
+eq('real bill: amount to pay, rounded down to the dinar', S.dt(pay.rounded), '69.000');
+eq('arrears are added', S.amountToPay(50000, 12500, 0).due, 62500);
+eq('paid more than the bill = credit', S.amountToPay(30000, 0, 45000).credit, 15000);
 eq('lower current reading', S.consumption(500, 400), null);
 eq('consumption', S.consumption(58628, 58928), 300);
 eq('dt rounding', S.dt(1234567), '1234.567');

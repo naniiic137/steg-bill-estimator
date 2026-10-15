@@ -10,7 +10,7 @@
  * been checked against a PRINTED STEG bill (see README.md, "Assumptions to verify").
  */
 var STEG_TARIFFS = {
-  lastVerified: '2026-10-15',
+  lastVerified: '2026-10-15', // STEG page + simulator + a printed bill
   source: 'https://www.steg.com.tn/fr/page/les-tarifs-d%C3%A9lectricit%C3%A9',
   currency: { millimesPerDinar: 1000, decimals: 3 },
 
@@ -47,9 +47,9 @@ var STEG_TARIFFS = {
     rtt: { perKwh: 10, capPerMonth: 1400, extraAbovePerMonth: 150, extraPerKwh: 4, extraCapPerMonth: 2100 },
     // VAT: on the energy at a rate chosen by the monthly kWh (7% up to 300 kWh/month since
     // 1 January 2025, 13% above), and on the power fee at its own rate. None on CL, FTE, RTT.
-    // Matches STEG's simulator; not yet checked against a printed bill.
+    // Matches STEG's simulator, and a printed bill (15/10/2026: 620 kWh, 4 months, 3 kVA, VAT 9.234 DT).
     vat: {
-      verified: false,
+      verified: true,
       energyRules: [
         { maxMonthlyKwh: 300, rate: 0.07 },
         { maxMonthlyKwh: null, rate: 0.13 },

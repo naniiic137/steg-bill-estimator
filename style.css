@@ -178,13 +178,17 @@ a { color: var(--primary); }
 }
 
 /* ---------- fields ---------- */
-.field { display: grid; gap: 6px; margin: 0 0 16px; padding: 0; border: 0; min-width: 0; }
+.field { display: grid; gap: 6px; align-content: start; margin: 0 0 16px; padding: 0; border: 0; min-width: 0; } /* side-by-side fields stay aligned even when one hint is longer */
 fieldset.field { margin-block-end: 16px; }
 .field > label, legend { font-weight: 600; font-size: 0.95rem; padding: 0; margin-block-end: 6px; }
 .field > legend { margin-block-end: 10px; }
 .hint { color: var(--muted); font-size: 0.88rem; }
 .grid2 { display: grid; gap: 0 14px; }
-@media (min-width: 560px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 560px) {
+  .grid2 { grid-template-columns: 1fr 1fr; }
+  /* fields side by side share their rows, so the boxes line up even when one label wraps */
+  .grid2 > .field { grid-row: span 4; grid-template-rows: subgrid; row-gap: 6px; }
+}
 
 input[type="text"], input[type="date"], select {
   width: 100%; min-height: 52px; padding: 12px 14px;
@@ -243,6 +247,7 @@ html[dir="rtl"] select { background-position: left 14px center; }
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12.5 4 4 8-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 15px no-repeat;
 }
 .mini-meter { flex: none; }
+.mini-meter, .meter-fig { direction: ltr; } /* the drawings are not text: never mirror them in Arabic */
 
 /* meter drawings (cards and the guide) */
 .m-body { fill: var(--surface-3); stroke: var(--border); stroke-width: 1.5; }
@@ -339,6 +344,9 @@ html[lang="ar"] .badge { text-transform: none; letter-spacing: 0; font-size: 0.8
 .breakdown .row-cal th, .breakdown .row-cal td { color: var(--primary); }
 .breakdown .row-total th, .breakdown .row-total td { border-block-start: 2px solid var(--text); font-size: 1.1rem; font-weight: 700; color: var(--text); padding-block: 12px; }
 .breakdown .row-perkwh th, .breakdown .row-perkwh td { font-size: 0.86rem; }
+.breakdown .row-pay:first-of-type th, .breakdown .row-perkwh + .row-pay th, .breakdown .row-perkwh + .row-pay td { padding-block-start: 16px; }
+.breakdown .row-topay th, .breakdown .row-topay td { border-block-start: 2px dashed var(--primary); color: var(--primary); font-weight: 700; font-size: 1.05rem; padding-block: 12px; }
+.res-topay { margin-block-start: 10px; display: inline-block; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.14); font-weight: 600; }
 .note { margin-block-start: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); color: var(--muted); font-size: 0.84rem; }
 
 .cliff, .chart { margin-block-start: 20px; padding-block-start: 18px; border-block-start: 1px solid var(--border-soft); }
@@ -485,7 +493,10 @@ details.card[open] > summary::after { transform: rotate(180deg); }
   .appbar { position: static; background: #fff; color: #000; backdrop-filter: none; }
   .layout { display: block; margin: 0; }
   .col-side { position: static; }
-  .card, .result { box-shadow: none; border: 1px solid #999; break-inside: avoid; }
+  .card, .result { box-shadow: none; border: 1px solid #999; }
+  .result { break-inside: auto; } /* a tall card may continue on the next page instead of leaving page 1 empty */
+  .res-hero, .breakdown tr, .cliff-list li, .chart, .disclaimer { break-inside: avoid; }
+  .appbar-inner { padding: 0 0 8px; }
   .res-hero { background: #fff; color: #000; border-block-end: 1px solid #ccc; }
   .badge { border: 1px solid #000; background: #fff; color: #000; }
   .disclaimer { border: 1px solid #999; margin-block-start: 12px; }

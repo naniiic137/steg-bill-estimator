@@ -60,6 +60,7 @@
 
   var MAIN_FIELDS = ['prev', 'curr', 'prev2', 'curr2', 'months', 'start', 'end', 'kvaOther'];
   var CAL_FIELDS = ['calKwh', 'calMonths', 'calKva', 'calPaid'];
+  var PAY_FIELDS = ['arrears', 'prepaid']; // money from earlier bills, both optional
 
   /* ---------------- small helpers ---------------- */
 
@@ -272,6 +273,17 @@
     return { errs: errs, result: result };
   }
 
+  /** Arrears and previous payments (DT -> millimes); empty boxes count as 0. */
+  function readPay() {
+    var errs = {}, vals = {};
+    PAY_FIELDS.forEach(function (id) {
+      var r = parseNumber($(id).value);
+      if (r.error) { errs[id] = { key: r.error, vars: null, soft: false }; vals[id] = 0; }
+      else vals[id] = r.empty ? 0 : Math.round(r.value * 1000);
+    });
+    return { errs: errs, arrears: vals.arrears, paid: vals.prepaid, any: vals.arrears > 0 || vals.prepaid > 0 };
+  }
+
   /* ---------------- rendering ---------------- */
 
   function showMsg(id, msg, kind) {
@@ -313,7 +325,7 @@
   /** One row of the breakdown: used for both the table and the copied text. */
   function row(label, value, cls) { return { label: label, value: value, cls: cls || '' }; }
 
-  function renderResult(main, cal) {
+  function renderResult(main, cal, pay) {
     var box = $('result');
     if (!main.valid) { box.hidden = true; copyText = ''; return; }
     box.hidden = false;
@@ -348,6 +360,23 @@
       // with a correction applied, the real cost per kWh includes it
       var perKwh = applied ? total / est.totalKwh : est.perKwh;
       lines.push(row(t('rowPerKwh'), iso(perKwh.toFixed(1)) + ' ' + t('unitMillimesKwh'), 'row-perkwh'));
+    }
+    // what is left to pay once earlier bills are counted, like the bottom of a STEG bill
+    var toPay = $('res-topay');
+    toPay.hidden = true;
+    if (pay && pay.any) {
+      var due = S.amountToPay(total, pay.arrears, pay.paid);
+      if (pay.arrears > 0) lines.push(row(t('rowArrears'), signedMoney(pay.arrears), 'row-pay'));
+      if (pay.paid > 0) lines.push(row(t('rowPrevious'), signedMoney(-pay.paid), 'row-pay'));
+      if (due.credit > 0) {
+        lines.push(row(t('rowCredit'), money(due.credit), 'row-topay'));
+        toPay.textContent = t('resCredit', { amount: money(due.credit) });
+      } else {
+        lines.push(row(t('rowToPay'), money(due.due), 'row-pay'));
+        lines.push(row(t('rowToPayRounded'), money(due.rounded), 'row-topay'));
+        toPay.textContent = t('resToPay', { amount: money(due.rounded) });
+      }
+      toPay.hidden = false;
     }
 
     fillRows($('res-info'), info);
@@ -492,11 +521,13 @@
     var activeMain = MAIN_FIELDS.filter(function (id) { return !isHidden($(id)); });
     renderMessages(MAIN_FIELDS, filterKeys(main.errs, activeMain), main.warns, submitted);
     renderMessages(CAL_FIELDS, cal.errs, null, calSubmitted);
+    var pay = readPay();
+    renderMessages(PAY_FIELDS, pay.errs, null, true);
 
-    $('months-computed').textContent = main.fromDates !== null ? t('monthsComputed', { n: iso(fmt(main.fromDates, 1)) }) : '';
+    $('months-computed').textContent = main.fromDates !== null ? t('monthsComputed', { n: iso(fmt(main.fromDates)) }) : '';
 
     renderCalibration(main, cal);
-    renderResult(main, cal.result);
+    renderResult(main, cal.result, pay);
     return main;
   }
 
@@ -563,7 +594,7 @@
     });
 
     // live: debounced while typing, immediate on change / leaving a field
-    [form, $('cal')].forEach(function (scope) {
+    [form, $('cal'), $('pay')].forEach(function (scope) {
       scope.addEventListener('input', function (e) {
         if (e.target.type === 'text') schedule(); else update();
       });

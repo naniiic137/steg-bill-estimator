@@ -5,12 +5,15 @@
 (function (root) {
   'use strict';
 
-  /** Months between two dates (days / 30.4), rounded to one decimal. */
+  /**
+   * Months between two dates, counted in WHOLE months like STEG does
+   * (a real bill: 26/12 to 20/04 = 115 days, billed as 4 months). At least 1.
+   */
   function monthsBetween(start, end) {
     var a = new Date(start), b = new Date(end);
     if (isNaN(a) || isNaN(b) || b <= a) return null;
     var days = Math.round((b - a) / 86400000);
-    return Math.round((days / 30.4) * 10) / 10;
+    return Math.max(1, Math.round(days / 30.4));
   }
 
   /** kWh between two readings; null when a reading is missing or the current one is lower. */
@@ -118,6 +121,16 @@
     };
   }
 
+  /**
+   * What is left to pay once earlier bills are counted (all in millimes), as at the bottom of a
+   * STEG bill: total + unpaid from earlier bills ("arriérés") - payments already made
+   * ("paiements précédents"). STEG bills show the amount to pay rounded DOWN to the whole dinar.
+   */
+  function amountToPay(total, arrears, paid) {
+    var due = total + (arrears || 0) - (paid || 0);
+    return { due: due, rounded: due > 0 ? Math.floor(due / 1000) * 1000 : 0, credit: due < 0 ? -due : 0 };
+  }
+
   /** Millimes -> "26.400" (DT, 3 decimals, Western digits). */
   function dt(millimes) {
     var neg = millimes < 0, v = Math.abs(Math.round(millimes));
@@ -125,6 +138,6 @@
     return (neg ? '-' : '') + s;
   }
 
-  var api = { monthsBetween: monthsBetween, consumption: consumption, findTier: findTier, vatRate: vatRate, estimate: estimate, cliff: cliff, calibrate: calibrate, dt: dt };
+  var api = { amountToPay: amountToPay, monthsBetween: monthsBetween, consumption: consumption, findTier: findTier, vatRate: vatRate, estimate: estimate, cliff: cliff, calibrate: calibrate, dt: dt };
   if (typeof module !== 'undefined') module.exports = api; else root.STEG = api;
 })(this);
